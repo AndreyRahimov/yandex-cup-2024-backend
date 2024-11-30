@@ -1,0 +1,35 @@
+from itertools import product
+
+n, m = int(input()), int(input())
+xs, bs = [int(i) for i in input().split()], [int(i) for i in input().split()]
+
+
+def calculate(x, as_: tuple):
+    """
+    Calculate the value of the expression:
+    a[n]x^n + a[n-1]x^(n-1) + ... + a[1]x + a[0] mod 23
+    """
+    ans = 0
+    xj = 1
+
+    # iterate over the coefficients
+    for a in range(len(as_)):
+        # add the term to the sum
+        ans += xj * as_[a]
+        # update xj
+        xj = (xj * x) % 23
+        # reduce the sum modulo 23
+        ans %= 23
+
+    return ans
+
+
+numbers = []
+combinations_number = min(n, 4)
+
+for combination in product(range(23), repeat=combinations_number):
+    if all(sum(xs[i] ** j * combination[j] for j in range(combinations_number)) % 23 == bs[i] for i in range(m)):
+        numbers = combination
+        break
+
+print("".join(chr(number + 97) for number in numbers) + "a" * (n - 4))
